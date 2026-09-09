@@ -39,7 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           disableTransitionOnChange
           storageKey="portfolio-theme"
         >
-          <TooltipProvider delayDuration={300}>
+          <TooltipProvider delay={300}>
             <Header />
             {children}
           </TooltipProvider>
