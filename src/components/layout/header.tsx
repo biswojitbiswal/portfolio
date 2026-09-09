@@ -20,10 +20,6 @@ const navigation = [
     label: "Projects",
     href: "/projects",
   },
-  {
-    label: "Contact",
-    href: "/#contact",
-  },
 ];
 
 export function Header() {
@@ -61,8 +57,8 @@ export function Header() {
           ))}
 
           <a
-            href="/documents/biswojit-biswal-resume.pdf"
-            download
+            href="/documents/biswojit_backend_developer.pdf"
+            download="Biswojit_Backend_Developer.pdf"
             className="ml-2 inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-border bg-background px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
           >
             <Download className="size-4" aria-hidden="true" />
@@ -73,7 +69,7 @@ export function Header() {
             href="/#contact"
             className="ml-1 inline-flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
           >
-            Let&apos;s talk
+            Let&apos;s Talk
           </Link>
 
           <div className="ml-1">
@@ -119,6 +115,7 @@ export function Header() {
                 {navigation.map((item) => (
                   <SheetClose
                     key={item.label}
+                    nativeButton={false}
                     render={
                       <Link
                         href={item.href}
@@ -131,10 +128,11 @@ export function Header() {
                 ))}
 
                 <SheetClose
+                  nativeButton={false}
                   render={
                     <a
                       href="/documents/biswojit_backend_developer.pdf"
-                      download
+                      download="Biswojit_Backend_Developer.pdf"
                       className="flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium text-foreground transition-colors hover:bg-accent"
                     />
                   }
@@ -146,6 +144,7 @@ export function Header() {
 
               <div className="mt-auto border-t p-4">
                 <SheetClose
+                  nativeButton={false}
                   render={
                     <Link
                       href="/#contact"
@@ -153,7 +152,7 @@ export function Header() {
                     />
                   }
                 >
-                  Let&apos;s work together
+                  Let&apos;s Talk
                 </SheetClose>
               </div>
             </SheetContent>
