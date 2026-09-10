@@ -1,13 +1,13 @@
+import { About } from "@/components/sections/about";
 import { Hero } from "@/components/sections/hero";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 export default function Home() {
   return (
-    // <main className="min-h-screen bg-background p-6 text-foreground sm:p-12">
       <main>
         <Hero />
+        <About />
       </main>
-    // </main>
   );
 }
 
