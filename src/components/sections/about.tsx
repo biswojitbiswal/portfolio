@@ -34,7 +34,7 @@ export function About() {
     <section
       id="about"
       aria-labelledby="about-heading"
-      className="relative scroll-mt-24 overflow-hidden bg-background py-20 sm:py-24 lg:py-18"
+      className="relative scroll-mt-24 overflow-hidden bg-background py-12 sm:py-12 lg:py-14"
     >
       {/* Background glow */}
       <div

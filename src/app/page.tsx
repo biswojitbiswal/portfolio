@@ -1,4 +1,5 @@
 import { About } from "@/components/sections/about";
+import { Capabilities } from "@/components/sections/capabilities";
 import { Hero } from "@/components/sections/hero";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 
@@ -7,6 +8,7 @@ export default function Home() {
       <main>
         <Hero />
         <About />
+        <Capabilities />
       </main>
   );
 }
