@@ -202,3 +202,17 @@
   color: var(--foreground);
   background: color-mix(in srgb, var(--primary) 28%, transparent);
 }
+
+@layer components {
+  .section-label {
+    @apply font-mono text-xs font-semibold tracking-[0.12em] text-technical uppercase sm:text-sm;
+  }
+
+  .section-heading {
+    @apply font-heading text-3xl leading-[1.08] font-bold tracking-[-0.035em] text-foreground sm:text-4xl lg:text-5xl;
+  }
+
+  .section-description {
+    @apply text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7;
+  }
+}

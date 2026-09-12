@@ -4,15 +4,7 @@ import Link from "next/link";
 import { Download, Menu } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 const navigation = [
@@ -27,25 +19,16 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo / Home */}
-        <Link
-          href="/"
-          className="group inline-flex items-center gap-2 font-semibold tracking-tight"
-          aria-label="Biswojit Biswal — Home"
-        >
+        <Link href="/" className="group inline-flex items-center gap-2 font-semibold tracking-tight" aria-label="Biswojit Biswal — Home">
           <span className="flex size-9 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 font-mono text-sm font-bold text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
             BB
           </span>
 
-          <span className="hidden text-sm sm:inline-block">
-            Biswojit Biswal
-          </span>
+          <span className="hidden text-sm sm:inline-block">Biswojit Biswal</span>
         </Link>
 
         {/* Desktop navigation */}
-        <nav
-          className="hidden items-center gap-1 md:flex"
-          aria-label="Primary navigation"
-        >
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary navigation">
           {navigation.map((item) => (
             <Link
               key={item.label}
@@ -82,46 +65,23 @@ export function Header() {
           <ThemeToggle />
 
           <Sheet>
-            <SheetTrigger
-              render={
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className="rounded-full"
-                  aria-label="Open navigation menu"
-                />
-              }
-            >
+            <SheetTrigger render={<Button type="button" variant="outline" size="icon" className="rounded-full" aria-label="Open navigation menu" />}>
               <Menu className="size-5" aria-hidden="true" />
             </SheetTrigger>
 
-            <SheetContent
-              side="right"
-              className="w-[min(88vw,22rem)] gap-0 border-border/70 bg-background/95 p-0 backdrop-blur-xl"
-            >
+            <SheetContent side="right" className="w-[min(88vw,22rem)] gap-0 border-border/70 bg-background/95 p-0 backdrop-blur-xl">
               <SheetHeader className="border-b px-6 py-5">
                 <SheetTitle>Biswojit Biswal</SheetTitle>
 
-                <SheetDescription>
-                  Backend Developer
-                </SheetDescription>
+                <SheetDescription>Backend Developer</SheetDescription>
               </SheetHeader>
 
-              <nav
-                className="flex flex-col gap-2 px-4 py-6"
-                aria-label="Mobile navigation"
-              >
+              <nav className="flex flex-col gap-2 px-4 py-6" aria-label="Mobile navigation">
                 {navigation.map((item) => (
                   <SheetClose
                     key={item.label}
                     nativeButton={false}
-                    render={
-                      <Link
-                        href={item.href}
-                        className="rounded-xl px-4 py-3 text-base font-medium text-foreground transition-colors hover:bg-accent"
-                      />
-                    }
+                    render={<Link href={item.href} className="rounded-xl px-4 py-3 text-base font-medium text-foreground transition-colors hover:bg-accent" />}
                   >
                     {item.label}
                   </SheetClose>
