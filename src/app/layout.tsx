@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <TooltipProvider delay={300}>
             <Header />
             {children}
+            <Footer />
           </TooltipProvider>
         </ThemeProvider>
       </body>

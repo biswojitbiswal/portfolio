@@ -276,10 +276,6 @@ function DesktopExperienceCard({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                MOBILE DESIGN                               */
-/* -------------------------------------------------------------------------- */
-
 function MobileExperience() {
   return (
     <div className="mx-auto max-w-xl px-5 sm:px-8 lg:hidden">
