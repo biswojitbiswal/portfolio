@@ -1,4 +1,5 @@
 import { ArrowRight, ArrowUp, FileText } from "lucide-react";
+import { ElementType } from "react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 const navigationLinks = [
@@ -28,6 +29,13 @@ const connectLinks = [
     external: true,
   },
 ];
+
+type ConnectLinkItem = {
+  label: string;
+  href: string;
+  icon: ElementType;
+  external: boolean;
+};
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -159,7 +167,7 @@ function NavigationLink({ label, href, highlighted = false }: { label: string; h
   );
 }
 
-function ConnectLink({ label, href, icon: Icon, external }: { label: string; href: string; icon: typeof FileText; external: boolean }) {
+function ConnectLink({ label, href, icon: Icon, external }: ConnectLinkItem) {
   return (
     <a
       href={href}
