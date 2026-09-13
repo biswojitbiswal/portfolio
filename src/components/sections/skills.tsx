@@ -253,20 +253,51 @@ export function Skills() {
 
   const activeCategory = useMemo(() => skillCategories.find((category) => category.id === activeCategoryId) ?? skillCategories[0], [activeCategoryId]);
 
-  useEffect(() => {
-    const activeTab = categoryScrollerRef.current?.querySelector<HTMLElement>(`[data-category-id="${activeCategoryId}"]`);
+  // useEffect(() => {
+  //   const activeTab = categoryScrollerRef.current?.querySelector<HTMLElement>(`[data-category-id="${activeCategoryId}"]`);
 
-    activeTab?.scrollIntoView({
-      behavior: reduceMotion ? "auto" : "smooth",
-      inline: "center",
-      block: "nearest",
-    });
+  //   activeTab?.scrollIntoView({
+  //     behavior: reduceMotion ? "auto" : "smooth",
+  //     inline: "center",
+  //     block: "nearest",
+  //   });
+
+  //   skillScrollerRef.current?.scrollTo({
+  //     left: 0,
+  //     behavior: reduceMotion ? "auto" : "smooth",
+  //   });
+  // }, [activeCategoryId, reduceMotion]);
+
+  useEffect(() => {
+    const container = categoryScrollerRef.current;
+
+    const activeTab =
+      container?.querySelector<HTMLElement>(
+        `[data-category-id="${activeCategoryId}"]`,
+      );
+
+    if (container && activeTab) {
+      const containerRect = container.getBoundingClientRect();
+      const tabRect = activeTab.getBoundingClientRect();
+
+      const targetLeft =
+        container.scrollLeft +
+        tabRect.left -
+        containerRect.left -
+        (container.clientWidth - tabRect.width) / 2;
+
+      container.scrollTo({
+        left: targetLeft,
+        behavior: reduceMotion ? "auto" : "smooth",
+      });
+    }
 
     skillScrollerRef.current?.scrollTo({
       left: 0,
       behavior: reduceMotion ? "auto" : "smooth",
     });
   }, [activeCategoryId, reduceMotion]);
+
 
   return (
     <section id="skills" aria-label="Technical skills" className="relative isolate scroll-mt-24 overflow-hidden bg-background py-12 sm:py-14 lg:py-16">
@@ -307,11 +338,10 @@ export function Skills() {
                   aria-selected={isActive}
                   aria-controls="active-skill-panel"
                   onClick={() => setActiveCategoryId(category.id)}
-                  className={`flex min-h-10 shrink-0 snap-start items-center gap-2 rounded-md border px-3.5 text-xs font-medium transition-[border-color,background-color,color] duration-300 outline-none focus-visible:ring-2 focus-visible:ring-ring sm:min-h-11 sm:px-4 sm:text-sm ${
-                    isActive
+                  className={`flex min-h-10 shrink-0 snap-start items-center gap-2 rounded-md border px-3.5 text-xs font-medium transition-[border-color,background-color,color] duration-300 outline-none focus-visible:ring-2 focus-visible:ring-ring sm:min-h-11 sm:px-4 sm:text-sm ${isActive
                       ? "border-technical bg-primary text-primary-foreground"
                       : "border-border bg-surface/75 text-muted-foreground hover:border-technical/40 hover:text-foreground"
-                  }`}
+                    }`}
                 >
                   <CategoryIcon aria-hidden="true" className="size-4 shrink-0" strokeWidth={1.8} />
 
@@ -339,9 +369,9 @@ export function Skills() {
                 reduceMotion
                   ? false
                   : {
-                      opacity: 0,
-                      y: 10,
-                    }
+                    opacity: 0,
+                    y: 10,
+                  }
               }
               animate={{
                 opacity: 1,
@@ -351,9 +381,9 @@ export function Skills() {
                 reduceMotion
                   ? undefined
                   : {
-                      opacity: 0,
-                      y: -8,
-                    }
+                    opacity: 0,
+                    y: -8,
+                  }
               }
               transition={{
                 duration: reduceMotion ? 0 : 0.22,
@@ -421,9 +451,9 @@ function SkillsBackground({ reduceMotion }: { reduceMotion: boolean }) {
             reduceMotion
               ? undefined
               : {
-                  r: [2, 5, 2],
-                  opacity: [0.3, 1, 0.3],
-                }
+                r: [2, 5, 2],
+                opacity: [0.3, 1, 0.3],
+              }
           }
           transition={{
             duration: 2.4,
@@ -440,9 +470,9 @@ function SkillsBackground({ reduceMotion }: { reduceMotion: boolean }) {
             reduceMotion
               ? undefined
               : {
-                  r: [3, 6, 3],
-                  opacity: [0.25, 0.9, 0.25],
-                }
+                r: [3, 6, 3],
+                opacity: [0.25, 0.9, 0.25],
+              }
           }
           transition={{
             duration: 3,
@@ -513,9 +543,9 @@ function SkillItem({ skill, index, reduceMotion }: { skill: Skill; index: number
         reduceMotion
           ? false
           : {
-              opacity: 0,
-              scale: 0.94,
-            }
+            opacity: 0,
+            scale: 0.94,
+          }
       }
       animate={{
         opacity: 1,
