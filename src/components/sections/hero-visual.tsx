@@ -1,7 +1,21 @@
-import Image from "next/image";
+import { SanityImage } from "@/components/shared/sanity-image";
 
-export function HeroVisual() {
-  return (
+type HeroVisualProps = {
+  imageUrl?: string;
+  imageAlt?: string;
+  code?: string;
+  quoteFirstLine?: string;
+  quoteSecondLine?: string;
+};
+
+export function HeroVisual({
+  imageUrl,
+  imageAlt,
+  code,
+  quoteFirstLine,
+  quoteSecondLine,
+}: HeroVisualProps) {
+return (
     <div className="relative mx-auto w-full max-w-[31rem]">
       <div className="group relative aspect-square w-full">
         {/* Decorative dot patterns */}
@@ -13,31 +27,35 @@ export function HeroVisual() {
         <div className="absolute inset-x-[13%] top-[2%] bottom-[7%] rotate-[7deg] overflow-hidden rounded-[46%_54%_44%_56%/36%_40%_60%_64%] bg-gradient-to-br from-technical-soft via-technical/35 to-primary/10 shadow-2xl shadow-technical/15">
           {/* Counter-rotation keeps the portrait straight */}
           <div className="absolute -inset-[8%] -bottom-[14%] -rotate-[7deg]">
-            <Image
-              src="/images/biswojit_profile.png"
-              alt="Biswojit Biswal, Backend Developer"
-              fill
-              priority
-              unoptimized
-              sizes="(max-width: 640px) 90vw, (max-width: 1024px) 70vw, 496px"
-              className="object-contain object-bottom grayscale transition-all duration-500 ease-out group-hover:scale-[1.025] group-hover:grayscale-0 group-active:grayscale-0"
-            />
+            {imageUrl && (
+              <SanityImage
+                src={imageUrl}
+                alt={imageAlt ?? "Backend Developer"}
+                fill
+                preload
+                sizes="(max-width: 640px) 90vw, (max-width: 1024px) 70vw, 496px"
+                className="object-contain object-bottom grayscale transition-all duration-500 ease-out group-hover:scale-[1.025] group-hover:grayscale-0 group-active:grayscale-0"
+              />
+            )}
           </div>
         </div>
 
         {/* Left code card */}
         <div className="absolute top-[38%] left-0 z-20 rounded-xl border border-technical/60 bg-surface/85 px-4 py-3 shadow-lg shadow-technical/10 backdrop-blur-xl sm:px-5 sm:py-4">
           <code className="block font-mono text-[0.65rem] leading-5 font-medium whitespace-pre text-technical sm:text-xs">
-            {"const\nideas =\nrealProducts();"}
+            {/* {"const\nideas =\nrealProducts();"} */}
+            {code}
           </code>
         </div>
 
         {/* Bottom quote card */}
         <div className="absolute right-[5%] bottom-[7%] z-20 rounded-xl border border-technical/60 bg-surface/85 px-4 py-3 shadow-lg shadow-technical/10 backdrop-blur-xl sm:px-5 sm:py-4">
           <code className="block font-mono text-[0.62rem] leading-5 whitespace-nowrap text-muted-foreground sm:text-xs">
-            // Keep Building
+            {/* // Keep Building */}
+            {quoteFirstLine}
             <br />
-            Better Solutions
+            {/* Better Solutions */}
+            {quoteSecondLine}
           </code>
         </div>
 

@@ -19,6 +19,17 @@ export default defineConfig({
   dataset,
   // Add and edit the content schema in the './sanity/schemaTypes' folder
   schema,
+  document: {
+    actions: (prev, context) => {
+      console.log(
+        'Sanity document actions:',
+        prev.map((action) => action.action),
+        context.schemaType
+      )
+
+      return prev
+    },
+  },
   plugins: [
     structureTool({structure}),
     // Vision is for querying with GROQ from inside the Studio

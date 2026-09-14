@@ -3,8 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,13 +24,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="flex min-h-screen flex-col antialiased">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange storageKey="portfolio-theme">
           <TooltipProvider delay={300}>
-            <Header />
             {children}
-            <Footer />
           </TooltipProvider>
         </ThemeProvider>
       </body>

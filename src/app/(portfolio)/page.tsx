@@ -6,9 +6,10 @@ import { Experience } from "@/components/sections/experience";
 import { Hero } from "@/components/sections/hero";
 import { Projects } from "@/components/sections/projects";
 import { Skills } from "@/components/sections/skills";
-import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { connection } from "next/server";
 
-export default function Home() {
+export default async function Home() {
+  await connection();
   return (
     <main>
       <Hero />

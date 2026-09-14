@@ -12,7 +12,7 @@ type Project = {
   category: string;
   role: string;
   description: string;
-  image: string;
+  image?: string;
   href: string;
   technologies: string[];
 };
@@ -24,7 +24,6 @@ const projects: Project[] = [
     category: "EdTech Platform",
     role: "Backend Developer",
     description: "A learning platform supporting classes, assignments, quizzes, recurring schedules and teacher workflows.",
-    image: "/images/projects/edusphere.png",
     href: "/projects/edusphere",
     technologies: ["NestJS", "TypeScript", "Prisma", "MongoDB", "Redis", "BullMQ"],
   },
@@ -34,7 +33,6 @@ const projects: Project[] = [
     category: "CMS & Corporate Website",
     role: "Backend Developer",
     description: "A modular CMS for services, case studies, events, newsletters and SEO content.",
-    image: "/images/projects/blink-brand-solutions.png",
     href: "/projects/blink-brand-solutions",
     technologies: ["NestJS", "MongoDB", "Redis"],
   },
@@ -44,7 +42,6 @@ const projects: Project[] = [
     category: "Real Estate Platform",
     role: "Backend Developer",
     description: "Property discovery with role-based dashboards, advanced filtering and real-time communication.",
-    image: "/images/projects/dalala.png",
     href: "/projects/dalala",
     technologies: ["NestJS", "WebSockets", "BullMQ"],
   },
@@ -54,7 +51,6 @@ const projects: Project[] = [
     category: "News Platform",
     role: "Full-stack Developer",
     description: "An SEO-focused publishing experience for industry news, categories and structured content.",
-    image: "/images/projects/leather-world-news.png",
     href: "/projects/leather-world-news",
     technologies: ["Next.js", "SEO", "Sitemap"],
   },
@@ -107,14 +103,7 @@ function DesktopProjects() {
       {/* Featured project */}
       <article className="overflow-hidden rounded-lg border border-technical/50 bg-surface">
         <div className="relative h-44 overflow-hidden border-b border-border xl:h-48">
-          <Image
-            src={featuredProject.image}
-            alt={`${featuredProject.title} project interface`}
-            fill
-            priority
-            sizes="(max-width: 1024px) 100vw, 40vw"
-            className="object-cover transition-transform duration-500 hover:scale-[1.02]"
-          />
+          <ProjectImage project={featuredProject} />
 
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-background/15" />
 
@@ -168,13 +157,7 @@ function DesktopProjectRow({ project }: { project: Project }) {
       className="group grid min-w-0 grid-cols-[4.5rem_minmax(0,1fr)] items-center gap-3 rounded-lg border border-border bg-surface p-3.75 transition-[border-color,transform,background-color] duration-300 outline-none hover:-translate-y-0.5 hover:border-technical/55 hover:bg-surface-soft focus-visible:ring-2 focus-visible:ring-ring xl:grid-cols-[5.5rem_minmax(0,1fr)_auto]"
     >
       <div className="relative h-20 overflow-hidden rounded-md border border-border xl:h-full xl:min-h-20">
-        <Image
-          src={project.image}
-          alt={`${project.title} project preview`}
-          fill
-          sizes="(max-width: 1279px) 72px, 88px"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
+        <ProjectImage project={project} />
       </div>
 
       <div className="min-w-0">
@@ -298,14 +281,7 @@ function MobileProjects() {
               className="overflow-hidden rounded-lg border border-border bg-surface"
             >
               <div className="relative aspect-[16/9] overflow-hidden border-b border-border">
-                <Image
-                  src={activeProject.image}
-                  alt={`${activeProject.title} project interface`}
-                  fill
-                  priority={activeIndex === 0}
-                  sizes="(max-width: 1024px) 90vw, 40vw"
-                  className="pointer-events-none object-cover"
-                />
+                <ProjectImage project={activeProject} />
               </div>
 
               <div className="p-4">
@@ -393,5 +369,30 @@ function BackgroundGlows() {
 
       <div className="absolute -right-16 -bottom-24 size-80 rounded-full bg-primary/12 blur-[110px]" />
     </div>
+  );
+}
+
+function ProjectImage({ project }: { project: Project }) {
+  const [failedSource, setFailedSource] = useState<string>();
+
+  if (!project.image || failedSource === project.image) {
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-technical-soft to-surface p-4 text-center">
+        <span aria-hidden="true" className="font-mono text-2xl text-technical">&lt;/&gt;</span>
+        <span className="text-xs font-medium text-muted-foreground">Preview coming soon</span>
+      </div>
+    );
+  }
+
+  return (
+    <Image
+      src={project.image}
+      alt={project.title + " project interface"}
+      width={960}
+      height={540}
+      sizes="(max-width: 1024px) 100vw, 40vw"
+      className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+      onError={() => setFailedSource(project.image)}
+    />
   );
 }

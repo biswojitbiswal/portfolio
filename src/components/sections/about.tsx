@@ -1,32 +1,47 @@
 import { BriefcaseBusiness, FileText, Rocket, type LucideIcon } from "lucide-react";
 
+import { client } from "@/sanity/lib/client";
+import { ABOUT_QUERY } from "@/sanity/lib/queries";
+import { ContentRefresh } from "@/components/providers/content-refresh";
+
 type AboutStat = {
+  _key: string;
   title: string;
   description: string;
-  icon: LucideIcon;
+  icon: string;
 };
 
-const aboutStats: AboutStat[] = [
-  {
-    title: "1+",
-    description: "Year of professional experience",
-    icon: BriefcaseBusiness,
-  },
-  {
-    title: "4",
-    description: "Major production projects",
-    icon: FileText,
-  },
-  {
-    title: "Full-cycle",
-    description: "Build, deploy and support",
-    icon: Rocket,
-  },
-];
+type AboutData = {
+  _id: string;
+  _rev: string;
+  sectionLabel: string;
+  headingFirstLine: string;
+  headingSecondLine: string;
+  desktopDescription: string;
+  mobileDescription: string;
+  statsLabel: string;
+  stats: AboutStat[] | null;
+  currentStatus: string;
+};
 
-export function About() {
+const statIcons: Record<string, LucideIcon> = {
+  briefcase: BriefcaseBusiness,
+  file: FileText,
+  rocket: Rocket,
+};
+
+export async function About() {
+  const about = await client.fetch<AboutData | null>(ABOUT_QUERY, {}, {
+    perspective: "published",
+    useCdn: false,
+    cache: "no-store",
+  });
+
+  if (!about) return <ContentRefresh section="about" initialRevision={null} />;
+
   return (
-    <section id="about" aria-label="About me" className="relative isolate scroll-mt-24 overflow-hidden bg-background py-12 sm:py-14 lg:py-16">
+    <section id="about" aria-label={about.sectionLabel} className="relative isolate scroll-mt-24 overflow-hidden bg-background py-12 sm:py-14 lg:py-16">
+      <ContentRefresh section="about" initialRevision={about._id + ":" + about._rev} />
       {/* Top-left primary glow */}
       <div aria-hidden="true" className="pointer-events-none absolute -top-40 -left-40 -z-10 size-80 rounded-full bg-primary/10 blur-[100px]" />
 
@@ -36,32 +51,31 @@ export function About() {
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 xl:px-16">
         {/* Desktop */}
         <div className="hidden items-start lg:grid lg:grid-cols-[1.05fr_0.95fr]">
-          <DesktopAboutContent />
+          <DesktopAboutContent about={about} />
 
-          <DesktopStats />
+          <DesktopStats about={about} />
         </div>
 
         {/* Mobile and tablet */}
-        <MobileAbout />
+        <MobileAbout about={about} />
       </div>
     </section>
   );
 }
 
-function DesktopAboutContent() {
+function DesktopAboutContent({ about }: { about: AboutData }) {
   return (
     <div className="relative pr-14 xl:pr-20">
-      <p className="section-label">&lt; About Me /&gt;</p>
+      <p className="section-label">&lt; {about.sectionLabel} /&gt;</p>
 
       <h2 id="about-heading-desktop" className="section-heading mt-3 max-w-xl">
-        Backend-focused.
+        {about.headingFirstLine}
         <br />
-        Product-minded.
+        {about.headingSecondLine}
       </h2>
 
       <p className="section-description mt-5 max-w-xl">
-        I&apos;m a Backend Developer at KGN INFOTECH LLP, building production-ready APIs and systems using NestJS, TypeScript, PostgreSQL, MongoDB, Prisma and
-        Redis. I also work with React and Next.js when end-to-end delivery is required.
+        {about.desktopDescription}
       </p>
 
       <div aria-hidden="true" className="mt-8 flex max-w-lg items-end gap-5">
@@ -73,15 +87,16 @@ function DesktopAboutContent() {
   );
 }
 
-function DesktopStats() {
+function DesktopStats({ about }: { about: AboutData }) {
+  const aboutStats = about.stats ?? [];
   return (
     <div className="border-l border-border pl-14 xl:pl-20">
-      <p className="section-label">At a glance</p>
+      <p className="section-label">{about.statsLabel}</p>
 
       <div className="mt-2">
-        {aboutStats.map(({ title, description, icon: Icon }, index) => (
-          <div key={title} className={`flex items-center gap-4 py-4 ${index !== aboutStats.length - 1 ? "border-b border-border" : ""} `}>
-            <StatIcon icon={Icon} />
+        {aboutStats.map(({ _key, title, description, icon }, index) => (
+          <div key={_key} className={`flex items-center gap-4 py-4 ${index !== aboutStats.length - 1 ? "border-b border-border" : ""} `}>
+            <StatIcon icon={statIcons[icon] ?? FileText} />
 
             <div>
               <p className="text-2xl leading-none font-bold tracking-tight text-foreground">{title}</p>
@@ -92,7 +107,7 @@ function DesktopStats() {
         ))}
       </div>
 
-      <CurrentStatus className="mt-5" />
+      <CurrentStatus text={about.currentStatus} className="mt-5" />
     </div>
   );
 }
@@ -101,25 +116,26 @@ function DesktopStats() {
 /*                                MOBILE DESIGN                               */
 /* -------------------------------------------------------------------------- */
 
-function MobileAbout() {
+function MobileAbout({ about }: { about: AboutData }) {
+  const aboutStats = about.stats ?? [];
   return (
     <div className="lg:hidden">
-      <p className="section-label">&lt; About Me /&gt;</p>
+      <p className="section-label">&lt; {about.sectionLabel} /&gt;</p>
 
       <h2 id="about-heading-mobile" className="section-heading mt-3">
-        Backend-focused.
+        {about.headingFirstLine}
         <br />
-        Product-minded.
+        {about.headingSecondLine}
       </h2>
 
       {/* Shorter mobile description */}
-      <p className="section-description mt-4">Backend Developer building reliable APIs and production systems with NestJS, TypeScript, databases and Redis.</p>
+      <p className="section-description mt-4">{about.mobileDescription}</p>
 
       {/* Only the two most important mobile statistics */}
       <div className="mt-6 grid grid-cols-2 border-y border-border py-4">
-        {aboutStats.slice(0, 2).map(({ title, description, icon: Icon }, index) => (
-          <div key={title} className={`flex min-w-0 items-center gap-3 ${index === 0 ? "pr-3" : "border-l border-border pl-4"} `}>
-            <StatIcon icon={Icon} compact />
+        {aboutStats.slice(0, 2).map(({ _key, title, description, icon }, index) => (
+          <div key={_key} className={`flex min-w-0 items-center gap-3 ${index === 0 ? "pr-3" : "border-l border-border pl-4"} `}>
+            <StatIcon icon={statIcons[icon] ?? FileText} compact />
 
             <div className="min-w-0">
               <p className="text-xl leading-none font-bold text-foreground">{title}</p>
@@ -130,17 +146,17 @@ function MobileAbout() {
         ))}
       </div>
 
-      <CurrentStatus className="mt-4" />
+      <CurrentStatus text={about.currentStatus} className="mt-4" />
     </div>
   );
 }
 
-function CurrentStatus({ className = "" }: { className?: string }) {
+function CurrentStatus({ text, className = "" }: { text: string; className?: string }) {
   return (
     <div className={`flex items-start gap-2.5 ${className}`}>
       <span aria-hidden="true" className="mt-1.5 size-2 shrink-0 rounded-full bg-primary shadow-sm" />
 
-      <p className="font-mono text-xs leading-5 text-muted-foreground">Currently building production systems at KGN INFOTECH LLP</p>
+      <p className="font-mono text-xs leading-5 text-muted-foreground">{text}</p>
     </div>
   );
 }
