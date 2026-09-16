@@ -6,15 +6,23 @@ import { experienceType } from './experience'
 import { projectType } from './project'
 import { projectsSectionType } from './projectsSection'
 import { skillsType } from './skills'
+import { educationType } from './education'
+import { contactType } from './contact'
+import { footerType } from './footer'
+import { headerType } from './header'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
+    headerType,
     heroType,
     aboutType,
     capabilitiesType,
     experienceType,
     projectType,
     projectsSectionType,
-    skillsType
+    skillsType,
+    educationType,
+    contactType,
+    footerType,
   ],
 }

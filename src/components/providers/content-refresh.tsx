@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 const REFRESH_INTERVAL = 15_000;
 
-export function ContentRefresh({ initialRevision, section = "hero" }: { initialRevision: string | null; section?: "hero" | "about" | "capabilities" | "experience" | "projects" | "skills" }) {
+export function ContentRefresh({ initialRevision, section = "hero" }: { initialRevision: string | null; section?: "hero" | "about" | "capabilities" | "experience" | "projects" | "skills" | "education" | "contact" | "footer" | "header" }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 

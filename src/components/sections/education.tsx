@@ -1,3 +1,7 @@
+import { Fragment } from "react";
+import { client } from "@/sanity/lib/client";
+import { EDUCATION_QUERY } from "@/sanity/lib/queries";
+import { ContentRefresh } from "@/components/providers/content-refresh";
 import { BookOpen, CalendarDays, GraduationCap, MapPin, School, type LucideIcon } from "lucide-react";
 
 type EducationItem = {
@@ -8,77 +12,73 @@ type EducationItem = {
   location: string;
   category: string;
   focus: string;
-  icon: LucideIcon;
+  icon: string;
 };
 
-const educationItems: EducationItem[] = [
-  {
-    id: "masters",
-    qualification: "Master of Computer Applications",
-    institution: "Example Institute of Technology",
-    period: "2022 — 2024",
-    location: "Odisha, India",
-    category: "Postgraduate",
-    focus: "Software engineering, backend systems and databases.",
-    icon: GraduationCap,
-  },
-  {
-    id: "bachelors",
-    qualification: "Bachelor of Computer Applications",
-    institution: "Example Degree College",
-    period: "2019 — 2022",
-    location: "Odisha, India",
-    category: "Undergraduate",
-    focus: "Programming fundamentals and web application development.",
-    icon: BookOpen,
-  },
-  {
-    id: "higher-secondary",
-    qualification: "Higher Secondary Education",
-    institution: "Example Higher Secondary School",
-    period: "2017 — 2019",
-    location: "Odisha, India",
-    category: "Higher Secondary",
-    focus: "Mathematics, computer fundamentals and problem-solving.",
-    icon: School,
-  },
-];
+type EducationData = {
+  _id: string;
+  _rev: string;
+  sectionLabel: string;
+  heading: string;
+  desktopDescription: string;
+  mobileDescription: string;
+  learningSteps: { _key: string; label: string }[];
+  educationItems: EducationItem[];
+};
 
-export function Education() {
+const educationIcons: Record<string, LucideIcon> = {
+  graduationCap: GraduationCap,
+  bookOpen: BookOpen,
+  school: School,
+};
+
+export async function Education() {
+  const data = await client.fetch<EducationData | null>(EDUCATION_QUERY, {}, {
+    perspective: "published",
+    useCdn: false,
+    cache: "no-store",
+  });
+
+  if (!data) return <ContentRefresh section="education" initialRevision={null} />;
+
   return (
     <section id="education" aria-labelledby="education-heading" className="relative isolate scroll-mt-24 overflow-hidden bg-background py-12 sm:py-14 lg:py-16">
+      <ContentRefresh section="education" initialRevision={data._id + ":" + data._rev} />
       <EducationBackground />
 
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 xl:px-16">
-        <DesktopEducation />
-        <MobileEducation />
+        <DesktopEducation data={data} />
+        <MobileEducation data={data} />
       </div>
     </section>
   );
 }
 
-function DesktopEducation() {
+function DesktopEducation({ data }: { data: EducationData }) {
   return (
     <div className="hidden items-start gap-14 lg:grid lg:grid-cols-[minmax(280px,0.75fr)_minmax(0,1.25fr)] xl:gap-20">
       {/* Introduction */}
       <div className="relative self-start">
-        <p className="section-label">&lt; Education /&gt;</p>
+        <p className="section-label">&lt; {data.sectionLabel} /&gt;</p>
 
         <h2 id="education-heading" className="section-heading mt-3 max-w-md">
-          Academic foundation.
+          {data.heading}
         </h2>
 
         <p className="section-description mt-4 max-w-md">
-          Formal education that developed my programming fundamentals, technical thinking and approach to software engineering.
+          {data.desktopDescription}
         </p>
 
-        <div className="mt-6 flex items-center gap-3 font-mono text-[0.65rem] tracking-[0.2em] text-muted-foreground uppercase">
-          <span>Learn</span>
-          <span className="h-px w-8 bg-technical/60" />
-          <span>Build</span>
-          <span className="h-px w-8 bg-technical/60" />
-          <span>Improve</span>
-        </div>
+        {data.learningSteps.length > 0 && (
+          <div className="mt-6 flex flex-wrap items-center gap-3 font-mono text-[0.65rem] tracking-[0.2em] text-muted-foreground uppercase">
+            {data.learningSteps.map((step, index) => (
+              <Fragment key={step._key}>
+                {index > 0 && <span aria-hidden="true" className="h-px w-8 bg-technical/60" />}
+                <span>{step.label}</span>
+              </Fragment>
+            ))}
+          </div>
+        )}
 
         <DesktopIntroDecoration />
       </div>
@@ -88,7 +88,7 @@ function DesktopEducation() {
         <div aria-hidden="true" className="absolute top-5 bottom-5 left-2 w-px bg-gradient-to-b from-technical via-border to-transparent" />
 
         <div className="space-y-3">
-          {educationItems.map((item, index) => (
+          {data.educationItems.map((item, index) => (
             <DesktopEducationCard key={item.id} item={item} index={index} />
           ))}
         </div>
@@ -98,7 +98,7 @@ function DesktopEducation() {
 }
 
 function DesktopEducationCard({ item, index }: { item: EducationItem; index: number }) {
-  const Icon = item.icon;
+  const Icon = educationIcons[item.icon] ?? GraduationCap;
 
   return (
     <article className="group relative pl-9">
@@ -156,23 +156,23 @@ function DesktopEducationCard({ item, index }: { item: EducationItem; index: num
   );
 }
 
-function MobileEducation() {
+function MobileEducation({ data }: { data: EducationData }) {
   return (
     <div className="lg:hidden">
-      <p className="section-label">&lt; Education /&gt;</p>
+      <p className="section-label">&lt; {data.sectionLabel} /&gt;</p>
 
       <h2 id="education-heading-mobile" className="section-heading mt-3">
-        Academic foundation.
+        {data.heading}
       </h2>
 
-      <p className="section-description mt-3">Education that shaped my programming and software development fundamentals.</p>
+      <p className="section-description mt-3">{data.mobileDescription}</p>
 
       {/* Compact mobile timeline */}
       <div className="relative mt-7">
         <div aria-hidden="true" className="absolute top-2 bottom-2 left-[0.3rem] w-px bg-gradient-to-b from-technical via-border to-transparent" />
 
         <div className="space-y-6">
-          {educationItems.map((item, index) => (
+          {data.educationItems.map((item, index) => (
             <MobileEducationItem key={item.id} item={item} index={index} />
           ))}
         </div>
@@ -182,7 +182,7 @@ function MobileEducation() {
 }
 
 function MobileEducationItem({ item, index }: { item: EducationItem; index: number }) {
-  const Icon = item.icon;
+  const Icon = educationIcons[item.icon] ?? GraduationCap;
 
   return (
     <article className="relative pl-7">

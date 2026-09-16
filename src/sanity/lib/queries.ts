@@ -155,3 +155,65 @@ export const SKILLS_QUERY = defineQuery(`
 export const SKILLS_REVISION_QUERY = defineQuery(`
   *[_type == "skills" && isActive == true][0] { _id, _rev }
 `);
+
+export const EDUCATION_QUERY = defineQuery(`
+  *[_type == "education" && isActive == true][0] {
+    _id, _rev, sectionLabel, heading, desktopDescription, mobileDescription,
+    "learningSteps": coalesce(learningSteps, []) | order(order asc) { _key, label },
+    "educationItems": coalesce(educationItems, []) | order(order asc) {
+      "id": _key,
+      qualification, institution, period, location, category, focus, icon
+    }
+  }
+`);
+
+export const EDUCATION_REVISION_QUERY = defineQuery(`
+  *[_type == "education" && isActive == true][0] { _id, _rev }
+`);
+
+export const CONTACT_QUERY = defineQuery(`
+  *[_type == "contact" && isActive == true][0] {
+    _id, _rev, sectionLabel, heading, description,
+    availabilityText, showAvailability, replyText, footerText,
+    "contactMethods": coalesce(contactMethods, []) | order(order asc) {
+      "id": _key,
+      label, title, value, href, icon, actionLabel, external
+    }
+  }
+`);
+
+export const CONTACT_REVISION_QUERY = defineQuery(`
+  *[_type == "contact" && isActive == true][0] { _id, _rev }
+`);
+
+export const FOOTER_QUERY = defineQuery(`
+  *[_type == "footer" && isActive == true][0] {
+    _id, _rev, brandName, role, description, navigationTitle, connectTitle,
+    copyrightName, builtWithText, backToTopLabel, backToTopHref,
+    "navigationLinks": coalesce(navigationLinks, []) | order(order asc) {
+      _key, label, href, highlighted
+    },
+    "connectLinks": coalesce(connectLinks, []) | order(order asc) {
+      _key, label, icon, external,
+      "href": select(linkType == "resume" => file.asset->url, url)
+    }
+  }
+`);
+
+export const FOOTER_REVISION_QUERY = defineQuery(`
+  *[_type == "footer" && isActive == true][0] { _id, _rev }
+`);
+
+export const HEADER_QUERY = defineQuery(`
+  *[_type == "header" && isActive == true][0] {
+    _id, _rev, brandName, specialization, showSpecialization,
+    "navigation": coalesce(navigation, []) | order(order asc) { _key, label, href },
+    resume { label, mobileLabel, "url": file.asset->url, downloadFileName },
+    cta { label, href },
+    mobileMenu { title, description }
+  }
+`);
+
+export const HEADER_REVISION_QUERY = defineQuery(`
+  *[_type == "header" && isActive == true][0] { _id, _rev }
+`);
