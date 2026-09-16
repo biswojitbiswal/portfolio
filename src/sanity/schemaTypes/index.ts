@@ -1,9 +1,11 @@
 import { type SchemaTypeDefinition } from 'sanity'
-import { projectType } from './project'
 import { heroType } from './hero'
 import { aboutType } from './about'
 import { capabilitiesType } from './capabilities'
 import { experienceType } from './experience'
+import { projectType } from './project'
+import { projectsSectionType } from './projectsSection'
+import { skillsType } from './skills'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -12,5 +14,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     capabilitiesType,
     experienceType,
     projectType,
+    projectsSectionType,
+    skillsType
   ],
 }

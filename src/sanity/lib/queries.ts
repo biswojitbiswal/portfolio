@@ -117,3 +117,41 @@ export const EXPERIENCE_QUERY = defineQuery(`
 export const EXPERIENCE_REVISION_QUERY = defineQuery(`
   *[_type == "experience" && isActive == true][0] { _id, _rev }
 `);
+
+export const PROJECTS_QUERY = defineQuery(`{
+  "section": *[_type == "projectsSection" && isActive == true][0] {
+    _id, _rev, desktopSectionLabel, mobileSectionLabel, heading,
+    desktopDescription, mobileDescription, viewAllLabel, viewAllHref, caseStudyLabel
+  },
+  "projects": *[_type == "project" && isActive == true && defined(slug.current)]
+    | order(coalesce(featured, false) desc, order asc, _id asc) {
+      "id": _id, _rev, title, category, role, description,
+      "image": image.asset->url,
+      "imageAlt": image.alt,
+      "href": "/projects/" + slug.current,
+      "technologies": coalesce(technologies, [])
+    }
+}`);
+
+export const PROJECTS_REVISION_QUERY = defineQuery(`{
+  "section": *[_type == "projectsSection" && isActive == true][0] { _id, _rev },
+  "projects": *[_type == "project" && isActive == true && defined(slug.current)]
+    | order(coalesce(featured, false) desc, order asc, _id asc) { "id": _id, _rev }
+}`);
+
+export const SKILLS_QUERY = defineQuery(`
+  *[_type == "skills" && isActive == true][0] {
+    _id, _rev, sectionLabel, heading, description,
+    "categories": coalesce(categories, []) | order(order asc) {
+      "id": _key,
+      title, shortTitle, description, icon,
+      "skills": coalesce(skills, []) | order(order asc) {
+        _key, name, icon, color
+      }
+    }
+  }
+`);
+
+export const SKILLS_REVISION_QUERY = defineQuery(`
+  *[_type == "skills" && isActive == true][0] { _id, _rev }
+`);

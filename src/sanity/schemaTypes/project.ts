@@ -2,7 +2,7 @@ import { defineField, defineType } from "sanity";
 
 export const projectType = defineType({
   name: "project",
-  title: "Projects",
+  title: "Project",
   type: "document",
 
   fields: [
@@ -17,82 +17,75 @@ export const projectType = defineType({
       name: "slug",
       title: "Slug",
       type: "slug",
+      description:
+        "Used for the project URL. Example: blink-brand-solutions",
       options: {
         source: "title",
-        maxLength: 96,
+        maxLength: 100,
       },
       validation: (Rule) => Rule.required(),
     }),
 
     defineField({
-      name: "shortDescription",
-      title: "Short Description",
-      type: "text",
-      rows: 3,
+      name: "category",
+      title: "Category",
+      type: "string",
       validation: (Rule) => Rule.required(),
-    }),
-
-    defineField({
-      name: "thumbnail",
-      title: "Thumbnail",
-      type: "image",
-      options: {
-        hotspot: true,
-      },
-    }),
-
-    defineField({
-      name: "coverImage",
-      title: "Cover Image",
-      type: "image",
-      options: {
-        hotspot: true,
-      },
-    }),
-
-    defineField({
-      name: "technologies",
-      title: "Technologies",
-      type: "array",
-      of: [{ type: "string" }],
     }),
 
     defineField({
       name: "role",
       title: "My Role",
       type: "string",
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
-      name: "overview",
-      title: "Project Overview",
+      name: "description",
+      title: "Short Description",
       type: "text",
-      rows: 5,
+      rows: 3,
+      description:
+        "Short project description used on the portfolio home page.",
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
-      name: "keyFeatures",
-      title: "Key Features",
+      name: "image",
+      title: "Project Image",
+      type: "image",
+      options: {
+        hotspot: true,
+      },
+
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alternative Text",
+          type: "string",
+          validation: (Rule) => Rule.required(),
+        }),
+      ],
+    }),
+
+    defineField({
+      name: "technologies",
+      title: "Technologies",
       type: "array",
-      of: [{ type: "string" }],
-    }),
-
-    defineField({
-      name: "githubUrl",
-      title: "GitHub URL",
-      type: "url",
-    }),
-
-    defineField({
-      name: "liveUrl",
-      title: "Live URL",
-      type: "url",
+      of: [
+        {
+          type: "string",
+        },
+      ],
+      validation: (Rule) => Rule.required().min(1),
     }),
 
     defineField({
       name: "featured",
       title: "Featured Project",
       type: "boolean",
+      description:
+        "Featured project is displayed as the large project card.",
       initialValue: false,
     }),
 
@@ -100,15 +93,31 @@ export const projectType = defineType({
       name: "order",
       title: "Display Order",
       type: "number",
-      initialValue: 1,
+      validation: (Rule) =>
+        Rule.required().integer().min(1),
+    }),
+
+    defineField({
+      name: "isActive",
+      title: "Active",
+      type: "boolean",
+      initialValue: true,
     }),
   ],
 
   preview: {
     select: {
       title: "title",
-      subtitle: "role",
-      media: "thumbnail",
+      subtitle: "category",
+      media: "image",
+    },
+
+    prepare({ title, subtitle, media }) {
+      return {
+        title,
+        subtitle,
+        media,
+      };
     },
   },
 });

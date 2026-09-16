@@ -1,15 +1,22 @@
+import { projectsRevision } from "@/sanity/lib/projects-revision";
 import { client } from "@/sanity/lib/client";
-import { ABOUT_REVISION_QUERY, CAPABILITIES_REVISION_QUERY, EXPERIENCE_REVISION_QUERY, HERO_REVISION_QUERY } from "@/sanity/lib/queries";
+import { ABOUT_REVISION_QUERY, CAPABILITIES_REVISION_QUERY, EXPERIENCE_REVISION_QUERY, HERO_REVISION_QUERY, PROJECTS_REVISION_QUERY, SKILLS_REVISION_QUERY } from "@/sanity/lib/queries";
 
 export async function GET(request: Request) {
   const headers = { "Cache-Control": "no-store" };
   const section = new URL(request.url).searchParams.get("section") ?? "hero";
-  if (section !== "hero" && section !== "about" && section !== "capabilities" && section !== "experience") {
+  if (section !== "hero" && section !== "about" && section !== "capabilities" && section !== "experience" && section !== "projects" && section !== "skills") {
     return Response.json({ error: "Unknown content section" }, { status: 400, headers });
   }
   try {
+    if (section === "projects") {
+      const data = await client.fetch<Parameters<typeof projectsRevision>[0]>(PROJECTS_REVISION_QUERY, {}, {
+        perspective: "published", useCdn: false, cache: "no-store", timeout: 8_000,
+      });
+      return Response.json({ revision: projectsRevision(data) }, { headers });
+    }
     const document = await client.fetch<{ _id: string; _rev: string } | null>(
-      section === "experience" ? EXPERIENCE_REVISION_QUERY : section === "capabilities" ? CAPABILITIES_REVISION_QUERY : section === "about" ? ABOUT_REVISION_QUERY : HERO_REVISION_QUERY,
+      section === "skills" ? SKILLS_REVISION_QUERY : section === "experience" ? EXPERIENCE_REVISION_QUERY : section === "capabilities" ? CAPABILITIES_REVISION_QUERY : section === "about" ? ABOUT_REVISION_QUERY : HERO_REVISION_QUERY,
       {},
       { perspective: "published", useCdn: false, cache: "no-store", timeout: 8_000 },
     );
