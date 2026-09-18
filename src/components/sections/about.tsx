@@ -78,11 +78,17 @@ function DesktopAboutContent({ about }: { about: AboutData }) {
         {about.desktopDescription}
       </p>
 
-      <div aria-hidden="true" className="mt-8 flex max-w-lg items-end gap-5">
+      <div aria-hidden="true" className="mt-6 flex max-w-lg items-center gap-3">
+        <div className="h-px flex-1 bg-gradient-to-r from-technical/80 to-transparent" />
+
+        <span className="size-2 border border-technical bg-background" />
+      </div>
+
+      {/* <div aria-hidden="true" className="mt-8 flex max-w-lg items-end gap-5">
         <CircuitLine />
 
         <DotPattern />
-      </div>
+      </div> */}
     </div>
   );
 }
@@ -112,9 +118,6 @@ function DesktopStats({ about }: { about: AboutData }) {
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                MOBILE DESIGN                               */
-/* -------------------------------------------------------------------------- */
 
 function MobileAbout({ about }: { about: AboutData }) {
   const aboutStats = about.stats ?? [];

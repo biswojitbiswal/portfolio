@@ -85,7 +85,7 @@ export async function Hero() {
         <div className="relative z-10 order-1">
           <p className="mb-4 font-mono text-sm font-semibold tracking-[0.12em] text-technical uppercase sm:text-base max-sm:mb-3 max-sm:text-[0.7rem] max-sm:tracking-[0.1em]">&lt; {hero.developerTag} /&gt;</p>
 
-          <h1 id="hero-heading" className="max-w-3xl font-heading text-[clamp(2.35rem,8vw,4rem)] leading-[1.02] font-bold tracking-[-0.045em] text-foreground max-sm:text-[clamp(1.9rem,8.5vw,2.25rem)] max-sm:leading-[1.1] max-sm:tracking-[-0.035em]">
+          <h1 id="hero-heading" className="max-w-3xl font-heading text-[clamp(2rem,5vw,3.25rem)] leading-[1.02] font-bold tracking-[-0.045em] text-foreground max-sm:text-[clamp(1.9rem,8.5vw,2.15rem)] max-sm:leading-[1.1] max-sm:tracking-[-0.035em]">
             {hero.heading}
           </h1>
 
