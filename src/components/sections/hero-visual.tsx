@@ -41,7 +41,7 @@ return (
         </div>
 
         {/* Left code card */}
-        <div className="absolute top-[38%] left-0 z-20 rounded-xl border border-technical/60 bg-surface/85 px-4 py-3 shadow-lg shadow-technical/10 backdrop-blur-xl sm:px-5 sm:py-4">
+        <div className="absolute top-[38%] left-[-13%] md:left-0 z-20 rounded-xl border border-technical/60 bg-surface/85 px-4 py-3 shadow-lg shadow-technical/10 backdrop-blur-xl sm:px-5 sm:py-4">
           <code className="block font-mono text-[0.65rem] leading-5 font-medium whitespace-pre text-technical sm:text-xs">
             {/* {"const\nideas =\nrealProducts();"} */}
             {code}
@@ -49,7 +49,7 @@ return (
         </div>
 
         {/* Bottom quote card */}
-        <div className="absolute right-[5%] bottom-[7%] z-20 rounded-xl border border-technical/60 bg-surface/85 px-4 py-3 shadow-lg shadow-technical/10 backdrop-blur-xl sm:px-5 sm:py-4">
+        <div className="absolute right-[-8%] md:right-[5%] bottom-[7%] z-20 rounded-xl border border-technical/60 bg-surface/85 px-4 py-3 shadow-lg shadow-technical/10 backdrop-blur-xl sm:px-5 sm:py-4">
           <code className="block font-mono text-[0.62rem] leading-5 whitespace-nowrap text-muted-foreground sm:text-xs">
             {/* // Keep Building */}
             {quoteFirstLine}
