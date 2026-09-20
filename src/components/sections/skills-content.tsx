@@ -1,5 +1,7 @@
 "use client";
 
+import { CmsIcon } from "@/components/shared/cms-icon";
+import { extraSkillIconNames } from "@/lib/skill-icon-presets";
 import type { ElementType, RefObject } from "react";
 import {
   ChevronLeft,
@@ -48,6 +50,8 @@ type Skill = {
   _key: string;
   name: string;
   icon: string;
+  iconName?: string | null;
+  iconImage?: string | null;
   color: string;
 };
 
@@ -58,6 +62,8 @@ type SkillCategory = {
   shortTitle: string;
   description: string;
   icon: LucideIcon;
+  iconName?: string | null;
+  iconImage?: string | null;
   skills: Skill[];
 };
 
@@ -73,6 +79,8 @@ export type SkillsData = {
     shortTitle: string;
     description: string;
     icon: string;
+    iconName?: string | null;
+    iconImage?: string | null;
     skills: Skill[];
   }[];
 };
@@ -132,6 +140,7 @@ export function SkillsContent({ data }: { data: SkillsData }) {
   const skillCategories = useMemo<SkillCategory[]>(() => data.categories.map((category) => ({
     ...category,
     icon: categoryIcons[category.icon] ?? Wrench,
+    iconName: category.iconName || ({ testing: "FlaskConical", cloud: "Cloud", ai: "BrainCircuit", apiTools: "Braces" } as Record<string, string>)[category.icon],
   })), [data.categories]);
   const [selectedCategoryId, setActiveCategoryId] = useState(skillCategories[0]?.id);
   const activeCategoryId = skillCategories.some((category) => category.id === selectedCategoryId)
@@ -222,7 +231,7 @@ export function SkillsContent({ data }: { data: SkillsData }) {
                     : "border-border bg-surface/75 text-muted-foreground hover:border-technical/40 hover:text-foreground"
                     }`}
                 >
-                  <CategoryIcon aria-hidden="true" className="size-4 shrink-0" strokeWidth={1.8} />
+                  <CmsIcon name={category.iconName} image={category.iconImage} fallback={CategoryIcon} className="size-4 shrink-0" />
 
                   {category.shortTitle}
                 </button>
@@ -393,7 +402,7 @@ function CategoryHeader({ category }: { category: SkillCategory }) {
     <div className="flex items-start justify-between gap-4">
       <div className="flex min-w-0 items-start gap-3 sm:gap-4">
         <div className="flex size-10 shrink-0 items-center justify-center rounded-md border border-technical/30 bg-technical-soft text-technical sm:size-12">
-          <CategoryIcon aria-hidden="true" className="size-5 sm:size-6" strokeWidth={1.8} />
+          <CmsIcon name={category.iconName} image={category.iconImage} fallback={CategoryIcon} className="size-5 sm:size-6" />
         </div>
 
         <div className="min-w-0">
@@ -445,8 +454,10 @@ function SkillItem({
       className="flex min-w-0 snap-start flex-col items-center justify-center gap-2 border-b border-border px-1 py-3 text-center transition-colors group-hover/panel:border-technical/40 sm:min-h-28 sm:py-4"
     >
       <div className="flex size-10 items-center justify-center rounded-md border border-border bg-surface-soft transition-[border-color,background-color,transform] duration-300 group-hover/panel:border-technical/40 group-hover/panel:bg-technical-soft sm:size-12">
-        <Icon
-          aria-hidden="true"
+        <CmsIcon
+          name={skill.iconName || extraSkillIconNames[skill.icon]}
+          image={skill.iconImage}
+          fallback={Icon}
           className="size-6 transition-[filter,opacity,transform] duration-500 sm:size-7 lg:opacity-70 lg:grayscale lg:group-hover/panel:-translate-y-0.5 lg:group-hover/panel:opacity-100 lg:group-hover/panel:grayscale-0"
           style={{
             color: skill.color,

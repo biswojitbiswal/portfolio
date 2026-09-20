@@ -147,9 +147,9 @@ export const SKILLS_QUERY = defineQuery(`
     _id, _rev, sectionLabel, heading, description,
     "categories": coalesce(categories, []) | order(order asc) {
       "id": _key,
-      title, shortTitle, description, icon,
+      title, shortTitle, description, icon, iconName, "iconImage": iconImage.asset->url,
       "skills": coalesce(skills, []) | order(order asc) {
-        _key, name, icon, color
+        _key, name, icon, iconName, "iconImage": iconImage.asset->url, color
       }
     }
   }

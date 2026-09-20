@@ -1,4 +1,22 @@
 import { defineField, defineType } from "sanity";
+import { extraSkillPresets } from "@/lib/skill-icon-presets";
+
+const customIconFields = () => [
+  defineField({
+    name: "iconName",
+    title: "Custom Icon Name",
+    type: "string",
+    description: "Overrides the preset. Lucide: Database, brain-circuit, or lucide/Server. React Icons: SiReactquery, SiPostman, fa6/FaAws, or md/MdCode. Copy the exact name from lucide.dev or react-icons.github.io/react-icons. Names must exist in the installed library version; unknown names show a default icon.",
+    validation: (Rule) => Rule.max(100).regex(/^(?:[a-z0-9]+\/)?[A-Za-z][A-Za-z0-9-]*$/, { name: "icon name" }),
+  }),
+  defineField({
+    name: "iconImage",
+    title: "Icon Image (optional)",
+    type: "image",
+    description: "Takes priority over the custom name and preset. Use a square PNG or WebP with a transparent background. If no icon is provided, the UI uses a default icon.",
+    options: { accept: "image/png,image/webp,image/jpeg,image/svg+xml" },
+  }),
+];
 
 export const skillsType = defineType({
   name: "skills",
@@ -51,7 +69,7 @@ export const skillsType = defineType({
               title: "Category ID",
               type: "slug",
               description:
-                "Internal identifier. Example: backend, databases, devops",
+                "Internal identifier. Add any category, such as frontend, testing, devops, or ai-search. No frontend code change is needed.",
               validation: (Rule) => Rule.required(),
             }),
 
@@ -90,11 +108,15 @@ export const skillsType = defineType({
                   { title: "Shield Check", value: "shieldCheck" },
                   { title: "Wrench", value: "wrench" },
                   { title: "Panels", value: "panels" },
+                  { title: "Testing", value: "testing" },
+                  { title: "Cloud / DevOps", value: "cloud" },
+                  { title: "AI & Search", value: "ai" },
+                  { title: "API Tools", value: "apiTools" },
                 ],
               },
 
-              validation: (Rule) => Rule.required(),
             }),
+            ...customIconFields(),
 
             // ------------------------------------------------
             // Skills
@@ -125,10 +147,11 @@ export const skillsType = defineType({
                       title: "Icon Key",
                       type: "string",
                       description:
-                        "Must match a key from the frontend skillIcons map.",
+                        "Choose a preset, enter a Custom Icon Name, or upload an Icon Image below.",
 
                       options: {
                         list: [
+                          ...extraSkillPresets.map(({ title, value }) => ({ title, value })),
                           // Backend
                           { title: "Node.js", value: "nodejs" },
                           { title: "NestJS", value: "nestjs" },
@@ -171,16 +194,15 @@ export const skillsType = defineType({
                         ],
                       },
 
-                      validation: (Rule) => Rule.required(),
                     }),
+                    ...customIconFields(),
 
                     defineField({
                       name: "color",
                       title: "Icon Color",
                       type: "string",
                       description:
-                        "CSS color used for the skill icon. Example: #339933",
-                      validation: (Rule) => Rule.required(),
+                        "Optional CSS color for icons (not uploaded images). Example: #339933",
                     }),
 
                     defineField({
