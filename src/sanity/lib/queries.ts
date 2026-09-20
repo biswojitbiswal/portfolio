@@ -126,6 +126,9 @@ export const PROJECTS_QUERY = defineQuery(`{
   "projects": *[_type == "project" && isActive == true && defined(slug.current)]
     | order(coalesce(featured, false) desc, order asc, _id asc) {
       "id": _id, _rev, title, category, role, description,
+      "slug": slug.current, status, liveSiteHref,
+      "highlights": coalesce(highlights, []),
+      "caseStudyHref": "/projects/" + slug.current,
       "image": image.asset->url,
       "imageAlt": image.alt,
       "href": "/projects/" + slug.current,

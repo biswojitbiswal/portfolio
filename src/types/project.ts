@@ -5,16 +5,18 @@ export type ProjectStatus =
 
 export type Project = {
   id: string;
+  _rev: string;
+  href: string;
   slug: string;
   title: string;
   category: string;
-  status: ProjectStatus;
+  status: ProjectStatus | null;
   role: string;
   description: string;
-  image: string;
-  imageAlt: string;
+  image: string | null;
+  imageAlt: string | null;
   technologies: string[];
   highlights: string[];
   caseStudyHref: string;
-  liveSiteHref?: string;
+  liveSiteHref?: string | null;
 };

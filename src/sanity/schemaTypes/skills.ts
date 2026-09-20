@@ -135,11 +135,13 @@ export const skillsType = defineType({
                           { title: "Express", value: "express" },
                           { title: "TypeScript", value: "typescript" },
                           { title: "JavaScript", value: "javascript" },
+                          { title: "Zod", value: "zod" },
 
                           // Databases
                           { title: "PostgreSQL", value: "postgresql" },
                           { title: "MongoDB", value: "mongodb" },
                           { title: "Prisma", value: "prisma" },
+                          { title: "SQL", value: "sql" },
 
                           // Caching & Jobs
                           { title: "Redis", value: "redis" },

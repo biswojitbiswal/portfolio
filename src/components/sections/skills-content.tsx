@@ -40,7 +40,9 @@ import {
   SiSwagger,
   SiTailwindcss,
   SiTypescript,
+  SiZod,
 } from "react-icons/si";
+import { GrMysql } from "react-icons/gr";
 
 type Skill = {
   _key: string;
@@ -91,11 +93,13 @@ const skillIcons: Record<string, ElementType> = {
   express: SiExpress,
   typescript: SiTypescript,
   javascript: SiJavascript,
+  zod: SiZod,
 
   // Databases
   postgresql: SiPostgresql,
   mongodb: SiMongodb,
   prisma: SiPrisma,
+  sql: GrMysql,
 
   // Caching & Jobs
   redis: SiRedis,

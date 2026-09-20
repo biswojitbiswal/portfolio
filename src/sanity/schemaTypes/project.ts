@@ -7,6 +7,18 @@ export const projectType = defineType({
 
   fields: [
     defineField({
+      name: "status", title: "Status", type: "string",
+      options: { list: ["Production", "Development", "Completed"] },
+    }),
+    defineField({
+      name: "highlights", title: "Project Highlights", type: "array",
+      of: [{ type: "string" }],
+    }),
+    defineField({
+      name: "liveSiteHref", title: "Live Website", type: "url",
+      validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
+    }),
+    defineField({
       name: "title",
       title: "Project Title",
       type: "string",
@@ -46,7 +58,7 @@ export const projectType = defineType({
       type: "text",
       rows: 3,
       description:
-        "Short project description used on the portfolio home page.",
+        "Short project description used on the home page and projects page.",
       validation: (Rule) => Rule.required(),
     }),
 

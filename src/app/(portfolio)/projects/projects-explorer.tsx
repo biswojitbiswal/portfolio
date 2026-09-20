@@ -1,18 +1,20 @@
 "use client";
 
-import Image from "next/image";
+import { SanityImage } from "@/components/shared/sanity-image";
+import type { ProjectsSection } from "@/components/sections/projects-content";
 import Link from "next/link";
 import {
-  ArrowLeft,
   ArrowRight,
   ArrowUpRight,
   Check,
   ChevronDown,
+  ChevronUp,
   Search,
   X,
 } from "lucide-react";
 import {
   useEffect,
+  useId,
   useMemo,
   useState,
 } from "react";
@@ -26,22 +28,23 @@ import type {
   ProjectStatus,
 } from "@/types/project";
 
-const PROJECTS_PER_PAGE = 4;
 
 type ProjectsExplorerProps = {
   projects: Project[];
+  section: ProjectsSection | null;
   initialSearch?: string;
   initialCategory?: string;
   initialTechnology?: string;
-  initialPage?: number;
+  selectedProjectId?: string;
 };
 
 export function ProjectsExplorer({
   projects,
+  section,
   initialSearch = "",
   initialCategory = "all",
   initialTechnology = "all",
-  initialPage = 1,
+  selectedProjectId,
 }: ProjectsExplorerProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -50,7 +53,6 @@ export function ProjectsExplorer({
   const [category, setCategory] = useState(initialCategory);
   const [technology, setTechnology] =
     useState(initialTechnology);
-  const [page, setPage] = useState(initialPage);
 
   const categories = useMemo(() => {
     return Array.from(
@@ -101,35 +103,6 @@ export function ProjectsExplorer({
     });
   }, [projects, search, category, technology]);
 
-  const pageCount = Math.max(
-    1,
-    Math.ceil(
-      filteredProjects.length / PROJECTS_PER_PAGE,
-    ),
-  );
-
-  const safePage = Math.min(page, pageCount);
-
-  const visibleProjects = useMemo(() => {
-    const start =
-      (safePage - 1) * PROJECTS_PER_PAGE;
-
-    return filteredProjects.slice(
-      start,
-      start + PROJECTS_PER_PAGE,
-    );
-  }, [filteredProjects, safePage]);
-
-  const firstVisibleProject =
-    filteredProjects.length === 0
-      ? 0
-      : (safePage - 1) * PROJECTS_PER_PAGE + 1;
-
-  const lastVisibleProject = Math.min(
-    safePage * PROJECTS_PER_PAGE,
-    filteredProjects.length,
-  );
-
   const hasActiveFilters =
     search.trim() !== "" ||
     category !== "all" ||
@@ -137,6 +110,9 @@ export function ProjectsExplorer({
 
   useEffect(() => {
     const params = new URLSearchParams();
+    if (selectedProjectId) {
+      params.set("project", selectedProjectId);
+    }
 
     if (search.trim()) {
       params.set("search", search.trim());
@@ -150,64 +126,38 @@ export function ProjectsExplorer({
       params.set("technology", technology);
     }
 
-    if (safePage > 1) {
-      params.set("page", String(safePage));
-    }
 
     const query = params.toString();
 
-    router.replace(
-      query ? `${pathname}?${query}` : pathname,
-      {
-        scroll: false,
-      },
-    );
+    const target = query ? `${pathname}?${query}` : pathname;
+    if (window.location.pathname + window.location.search !== target) {
+      router.replace(target + window.location.hash, { scroll: false });
+    }
   }, [
     search,
     category,
     technology,
-    safePage,
     pathname,
     router,
+    selectedProjectId,
   ]);
 
   function handleSearchChange(value: string) {
     setSearch(value);
-    setPage(1);
   }
 
   function handleCategoryChange(value: string) {
     setCategory(value);
-    setPage(1);
   }
 
   function handleTechnologyChange(value: string) {
     setTechnology(value);
-    setPage(1);
   }
 
   function clearFilters() {
     setSearch("");
     setCategory("all");
     setTechnology("all");
-    setPage(1);
-  }
-
-  function changePage(nextPage: number) {
-    if (nextPage < 1 || nextPage > pageCount) {
-      return;
-    }
-
-    setPage(nextPage);
-
-    window.requestAnimationFrame(() => {
-      document
-        .getElementById("projects-list")
-        ?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-    });
   }
 
   return (
@@ -228,7 +178,7 @@ export function ProjectsExplorer({
           px-5 sm:px-8 lg:px-12 xl:px-16
         "
       >
-        <ProjectsHeader />
+        <ProjectsHeader section={section} />
 
         <ProjectFilters
           search={search}
@@ -250,15 +200,16 @@ export function ProjectsExplorer({
           id="projects-list"
           className="scroll-mt-28"
         >
-          {visibleProjects.length > 0 ? (
+          {filteredProjects.length > 0 ? (
             <div className="divide-y divide-border">
-              {visibleProjects.map(
+              {filteredProjects.map(
                 (project, index) => (
                   <ProjectRow
                     key={project.id}
                     project={project}
+                    initiallyExpanded={project.id === selectedProjectId}
                     priority={
-                      safePage === 1 && index === 0
+                      index === 0
                     }
                   />
                 ),
@@ -279,18 +230,10 @@ export function ProjectsExplorer({
             "
           >
             <p className="text-xs text-muted-foreground">
-              Showing {firstVisibleProject}–
-              {lastVisibleProject} of{" "}
-              {filteredProjects.length} projects
+              Showing {filteredProjects.length} projects
             </p>
 
-            {pageCount > 1 && (
-              <Pagination
-                page={safePage}
-                pageCount={pageCount}
-                onChange={changePage}
-              />
-            )}
+
           </div>
         )}
 
@@ -300,7 +243,7 @@ export function ProjectsExplorer({
   );
 }
 
-function ProjectsHeader() {
+function ProjectsHeader({ section }: { section: ProjectsSection | null }) {
   return (
     <header
       className="
@@ -310,7 +253,7 @@ function ProjectsHeader() {
     >
       <div className="max-w-3xl">
         <p className="section-label">
-          &lt; Selected Work /&gt;
+          &lt; {section?.desktopSectionLabel ?? "Projects"} /&gt;
         </p>
 
         <h1
@@ -320,7 +263,7 @@ function ProjectsHeader() {
             max-w-3xl text-balance
           "
         >
-          Systems behind real products.
+          {section?.heading ?? "Projects"}
         </h1>
 
         <p
@@ -329,9 +272,7 @@ function ProjectsHeader() {
             max-w-2xl
           "
         >
-          Production backend systems across EdTech,
-          CMS, real estate and publishing—built for
-          reliability, security and scale.
+          {section?.desktopDescription}
         </p>
       </div>
 
@@ -597,10 +538,16 @@ function FilterSelect({
 function ProjectRow({
   project,
   priority = false,
+  initiallyExpanded = false,
 }: {
+  initiallyExpanded?: boolean;
   project: Project;
   priority?: boolean;
 }) {
+  const [failedImage, setFailedImage] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(initiallyExpanded);
+  const detailsId = useId();
+  const ToggleIcon = expanded ? ChevronUp : ChevronDown;
   const visibleTechnologies =
     project.technologies.slice(0, 4);
 
@@ -610,8 +557,9 @@ function ProjectRow({
 
   return (
     <article
+      id={`project-${project.id}`}
       className="
-        group grid grid-cols-1
+        group grid scroll-mt-28 grid-cols-1
         gap-3 py-4
 
         min-[360px]:grid-cols-[7rem_minmax(0,1fr)]
@@ -624,9 +572,7 @@ function ProjectRow({
       "
     >
       {/* Project image */}
-      <Link
-        href={project.caseStudyHref}
-        aria-label={`View ${project.title} case study`}
+      <div
         className="
           relative min-h-40
           overflow-hidden rounded-lg
@@ -641,11 +587,12 @@ function ProjectRow({
           sm:min-h-48
         "
       >
-        <Image
+        {project.image && failedImage !== project.image ? <SanityImage
           src={project.image}
-          alt={project.imageAlt}
+          alt={project.imageAlt ?? project.title}
           fill
-          priority={priority}
+          preload={priority}
+          onError={() => setFailedImage(project.image)}
           sizes="
             (max-width: 359px) 100vw,
             (max-width: 639px) 112px,
@@ -658,7 +605,7 @@ function ProjectRow({
             duration-500
             group-hover:scale-[1.025]
           "
-        />
+        /> : <span className="absolute inset-0 flex items-center justify-center p-3 text-center text-xs text-muted-foreground">Preview coming soon</span>}
 
         <div
           aria-hidden="true"
@@ -670,7 +617,7 @@ function ProjectRow({
             to-transparent
           "
         />
-      </Link>
+      </div>
 
       {/* Project information */}
       <div className="min-w-0 py-0.5">
@@ -684,7 +631,7 @@ function ProjectRow({
             {project.category}
           </ProjectBadge>
 
-          <StatusBadge status={project.status} />
+          {project.status && <StatusBadge status={project.status} />}
         </div>
 
         <div
@@ -838,8 +785,12 @@ function ProjectRow({
             justify-between gap-3
           "
         >
-          <Link
-            href={project.caseStudyHref}
+          <button
+            type="button"
+            onClick={() => setExpanded((current) => !current)}
+            aria-expanded={expanded}
+            aria-controls={detailsId}
+            aria-label={`${expanded ? "Show less" : "Show more"} about ${project.title}`}
             className="
               group/link inline-flex
               min-h-8 flex-1
@@ -850,7 +801,6 @@ function ProjectRow({
               font-semibold text-technical
               outline-none
               transition-colors
-              hover:bg-technical-soft
               focus-visible:ring-2
               focus-visible:ring-ring
 
@@ -861,17 +811,15 @@ function ProjectRow({
               sm:text-xs
             "
           >
-            View Case Study
+            {expanded ? "Show less" : "Show more"}
 
-            <ArrowRight
+            <ToggleIcon
               aria-hidden="true"
               className="
                 size-3.5
-                transition-transform
-                group-hover/link:translate-x-1
               "
             />
-          </Link>
+          </button>
 
           {project.liveSiteHref && (
             <a
@@ -900,6 +848,41 @@ function ProjectRow({
             </a>
           )}
         </div>
+      </div>
+      <div
+        id={detailsId}
+        hidden={!expanded}
+        className="col-span-full min-w-0 rounded-lg border border-border bg-surface p-4 sm:p-5"
+      >
+        <h3 className="text-sm font-semibold text-foreground">About {project.title}</h3>
+        <p className="mt-2 whitespace-pre-line break-words text-sm leading-6 text-muted-foreground">
+          {project.description}
+        </p>
+
+        {project.highlights.length > 0 && (
+          <div className="mt-5">
+            <h4 className="text-xs font-semibold text-technical">Project highlights</h4>
+            <ul className="mt-2 space-y-2">
+              {project.highlights.map((highlight, index) => (
+                <li key={`${index}-${highlight}`} className="flex items-start gap-2 text-sm leading-6 text-muted-foreground">
+                  <Check aria-hidden="true" className="mt-1 size-4 shrink-0 text-technical" />
+                  <span className="min-w-0 break-words">{highlight}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {project.technologies.length > 0 && (
+          <div className="mt-5">
+            <h4 className="text-xs font-semibold text-technical">Tech stack</h4>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {project.technologies.map((technology) => (
+                <TechnologyBadge key={technology}>{technology}</TechnologyBadge>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </article>
   );
@@ -995,129 +978,6 @@ function TechnologyBadge({
         {children}
       </span>
     </span>
-  );
-}
-
-function Pagination({
-  page,
-  pageCount,
-  onChange,
-}: {
-  page: number;
-  pageCount: number;
-  onChange: (page: number) => void;
-}) {
-  const pages = Array.from(
-    { length: pageCount },
-    (_, index) => index + 1,
-  );
-
-  return (
-    <nav
-      aria-label="Projects pagination"
-      className="
-        flex items-center justify-center
-        gap-2 sm:justify-end
-      "
-    >
-      <PaginationButton
-        label="Previous page"
-        disabled={page === 1}
-        onClick={() => onChange(page - 1)}
-      >
-        <ArrowLeft
-          aria-hidden="true"
-          className="size-3.5"
-        />
-
-        <span className="hidden sm:inline">
-          Previous
-        </span>
-      </PaginationButton>
-
-      {pages.map((pageNumber) => (
-        <button
-          key={pageNumber}
-          type="button"
-          onClick={() => onChange(pageNumber)}
-          aria-label={`Go to page ${pageNumber}`}
-          aria-current={
-            pageNumber === page
-              ? "page"
-              : undefined
-          }
-          className={`
-            flex size-9 items-center
-            justify-center rounded-md
-            border text-xs font-semibold
-            outline-none transition-colors
-            focus-visible:ring-2
-            focus-visible:ring-ring
-            ${
-              pageNumber === page
-                ? "border-technical bg-technical text-background"
-                : "border-border bg-surface/75 text-muted-foreground hover:border-technical/40 hover:text-technical"
-            }
-          `}
-        >
-          {pageNumber}
-        </button>
-      ))}
-
-      <PaginationButton
-        label="Next page"
-        disabled={page === pageCount}
-        onClick={() => onChange(page + 1)}
-      >
-        <span className="hidden sm:inline">
-          Next
-        </span>
-
-        <ArrowRight
-          aria-hidden="true"
-          className="size-3.5"
-        />
-      </PaginationButton>
-    </nav>
-  );
-}
-
-function PaginationButton({
-  label,
-  disabled,
-  onClick,
-  children,
-}: {
-  label: string;
-  disabled: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      aria-label={label}
-      className="
-        inline-flex min-h-9
-        items-center justify-center
-        gap-2 rounded-md border
-        border-border bg-surface/75
-        px-3 text-xs font-medium
-        text-muted-foreground
-        outline-none
-        transition-colors
-        hover:border-technical/40
-        hover:text-technical
-        focus-visible:ring-2
-        focus-visible:ring-ring
-        disabled:pointer-events-none
-        disabled:opacity-40
-      "
-    >
-      {children}
-    </button>
   );
 }
 

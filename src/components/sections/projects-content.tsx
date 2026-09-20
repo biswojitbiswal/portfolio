@@ -34,6 +34,10 @@ export type ProjectsSection = {
 
 type ProjectsContentProps = { section: ProjectsSection; projects: Project[] };
 
+function projectDetailsHref(project: Project) {
+  return `/projects?project=${encodeURIComponent(project.id)}#project-${encodeURIComponent(project.id)}`;
+}
+
 export function ProjectsContent({ section, projects }: ProjectsContentProps) {
   if (projects.length === 0) return null;
   return (
@@ -100,7 +104,13 @@ function DesktopProjects({ section, projects }: ProjectsContentProps) {
               <p className="mt-0.5 text-xs font-medium text-technical">{featuredProject.role}</p>
             </div>
 
-            <ExternalLink aria-hidden="true" className="mt-1 size-4 shrink-0 text-technical" />
+            <Link
+              href={projectDetailsHref(featuredProject)}
+              aria-label={`View details for ${featuredProject.title}`}
+              className="inline-flex size-9 shrink-0 items-center justify-center rounded-md text-technical outline-none hover:bg-technical-soft focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <ExternalLink aria-hidden="true" className="size-4" />
+            </Link>
           </div>
 
           <div className="mt-3 flex flex-wrap gap-1.5">
@@ -109,13 +119,9 @@ function DesktopProjects({ section, projects }: ProjectsContentProps) {
             ))}
           </div>
 
-          <Link
-            href={featuredProject.href}
-            className="group mt-4 inline-flex min-h-9 items-center gap-2 rounded-md bg-primary px-4 text-xs font-semibold text-primary-foreground transition-transform outline-none hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          >
-            {section.caseStudyLabel}
-            <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-1" />
-          </Link>
+          <p className="mt-4 line-clamp-2 min-h-10 text-sm leading-5 text-muted-foreground">
+            {featuredProject.description}
+          </p>
         </div>
       </article>
 
@@ -132,7 +138,7 @@ function DesktopProjects({ section, projects }: ProjectsContentProps) {
 function DesktopProjectRow({ project }: { project: Project }) {
   return (
     <Link
-      href={project.href}
+      href={projectDetailsHref(project)}
       className="group grid min-w-0 grid-cols-[4.5rem_minmax(0,1fr)] items-center gap-3 rounded-lg border border-border bg-surface p-3.75 transition-[border-color,transform,background-color] duration-300 outline-none hover:-translate-y-0.5 hover:border-technical/55 hover:bg-surface-soft focus-visible:ring-2 focus-visible:ring-ring xl:grid-cols-[5.5rem_minmax(0,1fr)_auto]"
     >
       <div className="relative h-20 overflow-hidden rounded-md border border-border xl:h-full xl:min-h-20">
@@ -269,11 +275,18 @@ function MobileProjects({ section, projects }: ProjectsContentProps) {
               <div className="p-4">
                 <ProjectCategory>{activeProject.category}</ProjectCategory>
 
-                <h3 className="mt-2 text-xl font-bold tracking-tight text-foreground">{activeProject.title}</h3>
+                <div className="mt-2 flex items-start justify-between gap-3">
+                  <h3 className="text-xl font-bold tracking-tight text-foreground">{activeProject.title}</h3>
+                  <Link
+                    href={projectDetailsHref(activeProject)}
+                    aria-label={`View details for ${activeProject.title}`}
+                    className="inline-flex size-9 shrink-0 items-center justify-center rounded-md text-technical outline-none hover:bg-technical-soft focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <ExternalLink aria-hidden="true" className="size-4" />
+                  </Link>
+                </div>
 
                 <p className="mt-0.5 text-xs font-medium text-technical">{activeProject.role}</p>
-
-                <p className="mt-2 line-clamp-3 text-sm leading-5 text-muted-foreground">{activeProject.description}</p>
 
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {activeProject.technologies.slice(0, 3).map((technology) => (
@@ -283,13 +296,9 @@ function MobileProjects({ section, projects }: ProjectsContentProps) {
                   {activeProject.technologies.length > 3 && <Technology>+{activeProject.technologies.length - 3}</Technology>}
                 </div>
 
-                <Link
-                  href={activeProject.href}
-                  className="group mt-4 flex min-h-10 w-full items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                >
-                  {section.caseStudyLabel}
-                  <ArrowRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-1" />
-                </Link>
+                <p className="mt-4 line-clamp-2 min-h-10 text-sm leading-5 text-muted-foreground">
+                  {activeProject.description}
+                </p>
               </div>
             </motion.article>
           </AnimatePresence>
