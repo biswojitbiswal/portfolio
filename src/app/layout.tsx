@@ -15,6 +15,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.biswojit.site"),
+  applicationName: "Biswojit Biswal",
+  openGraph: {
+    type: "website",
+    siteName: "Biswojit Biswal",
+    title: "Biswojit Biswal - Backend Developer",
+    description: "Backend Developer building scalable APIs and production-ready systems.",
+    images: [{ url: "/images/biswojit_profile.png", alt: "Biswojit Biswal" }],
+  },
   title: {
     default: "Biswojit Biswal — Backend Developer",
     template: "%s | Biswojit Biswal",

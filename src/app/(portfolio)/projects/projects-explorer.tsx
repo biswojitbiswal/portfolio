@@ -803,7 +803,6 @@ function ProjectRow({
               transition-colors
               focus-visible:ring-2
               focus-visible:ring-ring
-
               sm:min-h-0
               sm:flex-none
               sm:border-0

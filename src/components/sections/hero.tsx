@@ -70,8 +70,21 @@ export async function Hero() {
   if (!hero) {
     return <ContentRefresh initialRevision={null} />;
   }
+  const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": "https://www.biswojit.site/#person",
+    name: "Biswojit Biswal",
+    alternateName: ["Biswajit Biswal", "Viswajit Biswal"],
+    url: "https://www.biswojit.site/",
+    image: hero.profileImage?.asset?.url ?? "https://www.biswojit.site/images/biswojit_profile.png",
+    sameAs: (hero.socialLinks ?? [])
+      .filter((link) => ["linkedin", "github"].includes(link.platform) && /^https?:\/\//.test(link.url))
+      .map((link) => link.url),
+  };
   return (
     <section id="home" aria-labelledby="hero-heading" className="relative isolate overflow-hidden bg-background">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema).replace(/</g, "\\u003c") }} />
       <ContentRefresh initialRevision={hero._id + ":" + hero._rev} />
       {/* Background glows */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
