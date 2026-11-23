@@ -4,6 +4,8 @@ import { ArrowRight, Download } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import type { IconType } from "react-icons";
 
+import { DeveloperTags } from "./developer-tags";
+import { defaultDeveloperTags } from "@/lib/hero-tags";
 import { HeroVisual } from "./hero-visual";
 import { client } from "@/sanity/lib/client";
 import { HERO_QUERY } from "@/sanity/lib/queries";
@@ -18,6 +20,7 @@ type HeroData = {
   _id: string;
   _rev: string;
   developerTag: string;
+  developerTags?: string[] | null;
   heading: string;
   subtitle: string;
 
@@ -70,6 +73,8 @@ export async function Hero() {
   if (!hero) {
     return <ContentRefresh initialRevision={null} />;
   }
+  const configuredTags = (hero.developerTags ?? []).map((tag) => tag.trim()).filter(Boolean);
+  const tags = [...new Set(configuredTags.length ? configuredTags : defaultDeveloperTags)];
   const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -96,7 +101,7 @@ export async function Hero() {
       <div className="mx-auto grid min-h-[calc(100svh-5rem)] max-w-7xl items-center gap-12 px-5 pt-10 pb-12 sm:px-8 sm:pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-12 lg:py-16 xl:px-16 max-sm:min-h-0 max-sm:gap-6 max-sm:pt-7 max-sm:pb-8">
         {/* Hero content */}
         <div className="relative z-10 order-1">
-          <p className="mb-4 font-mono text-sm font-semibold tracking-[0.12em] text-technical uppercase sm:text-base max-sm:mb-3 max-sm:text-[0.7rem] max-sm:tracking-[0.1em]">&lt; {hero.developerTag} /&gt;</p>
+          <DeveloperTags key={JSON.stringify(tags)} tags={tags} />
 
           <h1 id="hero-heading" className="max-w-3xl font-heading text-[clamp(2rem,5vw,3.25rem)] leading-[1.02] font-bold tracking-[-0.045em] text-foreground max-sm:text-[clamp(1.9rem,8.5vw,2.15rem)] max-sm:leading-[1.1] max-sm:tracking-[-0.035em]">
             {hero.heading}

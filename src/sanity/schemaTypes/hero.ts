@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { defaultDeveloperTags } from "@/lib/hero-tags";
 
 export const heroType = defineType({
   name: "hero",
@@ -6,6 +7,15 @@ export const heroType = defineType({
   type: "document",
 
   fields: [
+    defineField({
+      name: "developerTags",
+      title: "Animated Developer Tags",
+      type: "array",
+      description: "Roles shown one at a time with a typing animation, in this order. Leave empty to use the default six roles. Add or reorder roles here.",
+      of: [{ type: "string", validation: (Rule) => Rule.required().min(1).max(40) }],
+      initialValue: defaultDeveloperTags,
+      validation: (Rule) => Rule.unique().max(20),
+    }),
     defineField({
       name: "developerTag",
       title: "Developer Tag",

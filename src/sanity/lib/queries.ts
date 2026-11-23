@@ -5,6 +5,7 @@ export const HERO_QUERY = defineQuery(`
     _id,
     _rev,
     developerTag,
+    developerTags,
     heading,
     subtitle,
 
